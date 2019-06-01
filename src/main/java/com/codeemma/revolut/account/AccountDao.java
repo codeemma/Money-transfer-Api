@@ -8,10 +8,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 public class AccountDao {
-    private static ConcurrentMap<String, Account> accountDataStore;
+    private final static ConcurrentMap<String, Account> accountDataStore = new ConcurrentHashMap<>();
 
     public AccountDao() {
-        accountDataStore = new ConcurrentHashMap<>();
     }
 
     public Account create(String accountNumber, String accountName, BigDecimal initialAmount) {

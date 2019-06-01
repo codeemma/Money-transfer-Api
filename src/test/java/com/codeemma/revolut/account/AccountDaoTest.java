@@ -4,14 +4,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class AccountDaoTest {
     private AccountDao accountDao;
-    private String dumAccountNumber = "123568812";
-    private String dumAccountName = "Emmanuel Olayinka";
+
 
     @Before
     public void setUp() throws Exception {
@@ -20,6 +18,9 @@ public class AccountDaoTest {
 
     @Test
     public void create() {
+        String dumAccountNumber = "11111";
+        String dumAccountName = "Emmanuel Olayinka";
+
         Account result = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
 
         assertEquals(dumAccountNumber, result.getAccountNumber());
@@ -29,16 +30,21 @@ public class AccountDaoTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void createAnExistingAccountShouldThrowException() {
-        Account result = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
+        String dumAccountNumber = "222222";
+        String dumAccountName = "Emmanuel Olayinka";
+
+        accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
 
         accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.valueOf(1000));
     }
 
     @Test
     public void get() {
-        Account account = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
+        String dumAccountNumber = "33333";
+        String dumAccountName = "Emmanuel Olayinka";
+        Account testAccount = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
 
-        Account result = accountDao.get(account.getAccountNumber());
+        Account result = accountDao.get(testAccount.getAccountNumber());
 
         assertEquals(dumAccountNumber, result.getAccountNumber());
         assertEquals(dumAccountName, result.getAccountName());
@@ -46,16 +52,19 @@ public class AccountDaoTest {
     }
 
     @Test
-    public void getShouldReturnNullwhenAccountIsNotInStore() {
+    public void getShouldReturnNullWhenAccountIsNotInStore() {
 
-        Account result = accountDao.get(dumAccountNumber);
+        Account result = accountDao.get("zzzzzzz");
 
         assertNull(result);
     }
 
     @Test
     public void update() {
-        Account account = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
+        String accNumber = "555555";
+        String dumAccountName = "Emmanuel Olayinka";
+
+        Account account = accountDao.create(accNumber, dumAccountName, BigDecimal.ZERO);
         String newName = "Emmanuel";
         BigDecimal newBalance = BigDecimal.valueOf(2000.00);
 
@@ -64,7 +73,7 @@ public class AccountDaoTest {
         account.setAccountBalance(newBalance);
         Account updatedAccount = accountDao.update(account);
 
-        assertEquals(dumAccountNumber, updatedAccount.getAccountNumber());
+        assertEquals(accNumber, updatedAccount.getAccountNumber());
         assertEquals(newName, updatedAccount.getAccountName());
         assertEquals(newBalance, updatedAccount.getAccountBalance());
     }
@@ -73,9 +82,9 @@ public class AccountDaoTest {
     public void listAccounts() {
         createNewAccounts(3);
 
-        var acountList = accountDao.listAccounts();
+        var accountList = accountDao.listAccounts();
 
-        assertEquals(3, acountList.size());
+        assertTrue(accountList.size() >= 3); //for concurrent run of test, it shouldn't be less than 3
     }
 
     private void createNewAccounts(int i) {
