@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -62,5 +63,16 @@ public class AccountDaoTest {
 
     @Test
     public void listAccounts() {
+        createNewAccounts(3);
+
+        var acountList = accountDao.listAccounts();
+
+        assertEquals(3, acountList.size());
+    }
+
+    private void createNewAccounts(int i) {
+        for(var j = 1; j<=i; j++){
+            accountDao.create("123456" + j, "account name" + j, BigDecimal.valueOf(100));
+        }
     }
 }
