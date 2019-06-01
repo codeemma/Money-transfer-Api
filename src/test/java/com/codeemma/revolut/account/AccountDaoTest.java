@@ -46,6 +46,17 @@ public class AccountDaoTest {
 
     @Test
     public void update() {
+        Account account = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
+        String newName = "Emmanuel";
+        BigDecimal newBalance = BigDecimal.valueOf(2000.00);
+
+        account.setAccountName(newName);
+        account.setAccountBalance(newBalance);
+        Account updatedAccount = accountDao.update(account);
+
+        assertEquals(dumAccountNumber, updatedAccount.getAccountNumber());
+        assertEquals(newName, updatedAccount.getAccountName());
+        assertEquals(newBalance, updatedAccount.getAccountBalance());
     }
 
     @Test
