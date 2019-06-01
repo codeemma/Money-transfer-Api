@@ -18,6 +18,7 @@ public class AccountServiceImpl implements AccountService {
         Account destination = accountDao.get(destinationAccount);
 
         if (originator.getAccountBalance().compareTo(amount) < 0){
+            logger.severe("insufficient balance in account " + originatingAccount);
             throw  new UnsupportedOperationException("insufficient balance in account " + originatingAccount);
         }
 

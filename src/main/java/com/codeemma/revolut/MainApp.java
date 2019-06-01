@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 
 public class MainApp {
     int serverPort = 8080;
+    HttpServer server;
 
     public static void main(String[] args) throws IOException {
         MainApp mainApp = new MainApp();
@@ -23,7 +24,7 @@ public class MainApp {
     }
 
     public void startServer() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(serverPort), 0);
+        server = HttpServer.create(new InetSocketAddress(serverPort), 0);
         createContext(server);
         server.setExecutor(Executors.newCachedThreadPool()); // set executor for multithreading
         server.start();
@@ -41,5 +42,9 @@ public class MainApp {
         });
         System.out.println("context created"+"/api/hello");
 
+    }
+
+    public void stopServer(){
+        server.stop(1);
     }
 }

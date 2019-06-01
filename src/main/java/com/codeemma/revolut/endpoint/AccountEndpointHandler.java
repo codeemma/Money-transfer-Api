@@ -6,8 +6,10 @@ import com.sun.net.httpserver.HttpExchange;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class AccountEndpointHandler {
+    private Logger logger = Logger.getLogger(getClass().getName());
 
     private AccountService accountService;
 
@@ -22,6 +24,8 @@ public class AccountEndpointHandler {
         String originatingAccountNumber = queryMap.get("from");
         String destinationAccountNumber = queryMap.get("to");
         BigDecimal amount =  new BigDecimal(queryMap.get("amount"));
+
+        logger.info(String.format("transfer from <%s> to <%s>, amount <%s> ",originatingAccountNumber, destinationAccountNumber, amount));
 
         accountService.transferFund(originatingAccountNumber, destinationAccountNumber, amount);
 
