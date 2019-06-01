@@ -32,15 +32,9 @@ public class MainApp {
     }
 
     private static void createContext(HttpServer server) {
-        server.createContext("/api/transfer", (var exchange) -> {
-            String respText = "Hello! ";
-            exchange.sendResponseHeaders(200, respText.getBytes().length);
-            OutputStream output = exchange.getResponseBody();
-            output.write(respText.getBytes());
-            output.flush();
-            exchange.close();
-        });
-        System.out.println("context created"+"/api/hello");
+        AccountEndpointHandler accountEndpointHandler = new AccountEndpointHandler(new AccountServiceImpl());
+        server.createContext("/api/transfer", accountEndpointHandler::handleTransfer);
+        System.out.println("context created"+"/api/transfer");
 
     }
 

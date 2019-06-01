@@ -3,6 +3,7 @@ package com.codeemma.revolut.endpoint;
 import com.codeemma.revolut.account.AccountService;
 import com.sun.net.httpserver.HttpExchange;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class AccountEndpointHandler {
     }
 
     //URI - transfer?from={origin}&to={destination}&amount={amount}
-    public void handleTransfer(HttpExchange exchange) throws Exception{
+    public void handleTransfer(HttpExchange exchange) throws IOException {
         Map<String, String> queryMap = getQueryMap(exchange);
 
         String originatingAccountNumber = queryMap.get("from");
