@@ -1,7 +1,10 @@
 package com.codeemma.revolut.account;
 
+import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 
@@ -12,6 +15,7 @@ public class AccountServiceTest {
     private AccountService accountService;
 
     private AccountDao accountDao;
+    @Rule private ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -36,8 +40,10 @@ public class AccountServiceTest {
     }
 
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void transferFundShouldThrowExceptionWhenInsufficientFund() {
+        expectedException.expect(UnsupportedOperationException.class);
+        expectedException.expectMessage((""));
         String originatingAccountNumber = "2345";
         String destinationAccountNumber = "23456";
         accountDao.create(originatingAccountNumber,"holder 2", BigDecimal.valueOf(5000.00));

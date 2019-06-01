@@ -12,7 +12,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public void transferFund(String originatingAccount, String destinationAccount, BigDecimal amount) {
+    public synchronized void transferFund(String originatingAccount, String destinationAccount, BigDecimal amount) {
         logger.info(String.format("initiating transfer from %s to %s, amount = %s", originatingAccount,destinationAccount,amount));
         Account originator = accountDao.get(originatingAccount);
         Account destination = accountDao.get(destinationAccount);
@@ -22,6 +22,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         originator.setAccountBalance(originator.getAccountBalance().subtract(amount));
+        logger.info(amount +" deducted from account: "+ originator);
         destination.setAccountBalance(destination.getAccountBalance().add(amount));
     }
 }
