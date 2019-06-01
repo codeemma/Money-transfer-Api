@@ -50,6 +50,7 @@ public class AccountDaoTest {
         String newName = "Emmanuel";
         BigDecimal newBalance = BigDecimal.valueOf(2000.00);
 
+        //edit account
         account.setAccountName(newName);
         account.setAccountBalance(newBalance);
         Account updatedAccount = accountDao.update(account);
