@@ -46,6 +46,14 @@ public class AccountDaoTest {
     }
 
     @Test
+    public void getShouldReturnNullwhenAccountIsNotInStore() {
+
+        Account result = accountDao.get(dumAccountNumber);
+
+        assertNull(result);
+    }
+
+    @Test
     public void update() {
         Account account = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
         String newName = "Emmanuel";
