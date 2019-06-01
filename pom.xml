@@ -15,6 +15,14 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.eclipse.persistence/javax.persistence -->
 <!--        <dependency>-->
 <!--            <groupId>org.eclipse.persistence</groupId>-->
