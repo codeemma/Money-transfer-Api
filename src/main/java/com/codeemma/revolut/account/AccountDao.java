@@ -25,7 +25,7 @@ public class AccountDao {
     }
 
     public Account get(String accountNumber) {
-        return null;
+        return accountDataStore.get(accountNumber);
     }
 
     public Account update(Account account) {
