@@ -15,7 +15,13 @@ public class AccountDao {
     }
 
     public Account create(String accountNumber, String accountName, BigDecimal initialAmount) {
-        return null;
+        Account account = new Account(accountNumber,accountName,initialAmount);
+
+        if (accountDataStore.putIfAbsent(accountNumber, account) != null){
+            throw new UnsupportedOperationException("account with account number already exist");//this could return custom exception
+        }
+
+        return account;
     }
 
     public Account get(String accountNumber) {

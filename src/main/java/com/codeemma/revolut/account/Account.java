@@ -1,8 +1,12 @@
 package com.codeemma.revolut.account;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Account {
+public class Account implements Serializable {
+
+    private static final long serialVersionUID = 301265L;
+
     private Long id;
     private String AccountNumber;
     private String accountName;
@@ -47,5 +51,15 @@ public class Account {
 
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", AccountNumber='" + AccountNumber + '\'' +
+                ", accountName='" + accountName + '\'' +
+                ", accountBalance=" + accountBalance +
+                '}';
     }
 }

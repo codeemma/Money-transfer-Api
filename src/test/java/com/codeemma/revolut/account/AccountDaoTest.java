@@ -26,6 +26,13 @@ public class AccountDaoTest {
         assertEquals(BigDecimal.ZERO, result.getAccountBalance());
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void createAnExistingAccountShouldThrowException() {
+        Account result = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
+
+        accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.valueOf(1000));
+    }
+
     @Test
     public void get() {
         Account account = accountDao.create(dumAccountNumber,dumAccountName, BigDecimal.ZERO);
