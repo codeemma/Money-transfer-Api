@@ -3,6 +3,7 @@ package com.codeemma.revolut.endpoint;
 import com.codeemma.revolut.MainApp;
 import com.codeemma.revolut.account.Account;
 import com.codeemma.revolut.account.AccountDao;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.*;
 
 import java.io.IOException;
@@ -43,10 +44,11 @@ public class AccountEndpointHandlerTest {
         accountDao.create(secondAcc,"second holder", BigDecimal.valueOf(2000));
 
         HttpResponse response = transferOverHttp(firstAcc, secondAcc, amount);
-        Account updatedFirstAcc = accountDao.get(firstAcc);
+        Account updatedFirstAcc = new ObjectMapper().readValue((String)response.body(),Account.class);
         Account updatedSecondAcc = accountDao.get(secondAcc);
 
         assertThat(response.statusCode(), is(200));
+        System.out.println("body ---" +response.body());
         assertThat(updatedFirstAcc.getAccountBalance(),is(BigDecimal.valueOf(1000)));
         assertThat(updatedSecondAcc.getAccountBalance(),is(BigDecimal.valueOf(3000)));
 

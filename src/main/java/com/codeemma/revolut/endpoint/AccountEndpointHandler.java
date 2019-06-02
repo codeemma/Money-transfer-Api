@@ -1,6 +1,8 @@
 package com.codeemma.revolut.endpoint;
 
+import com.codeemma.revolut.account.Account;
 import com.codeemma.revolut.account.AccountService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -30,9 +32,11 @@ public class AccountEndpointHandler {
 
         logger.info(String.format("transfer from <%s> to <%s>, amount <%s> ",originatingAccountNumber, destinationAccountNumber, amount));
         try {
-            accountService.transferFund(originatingAccountNumber, destinationAccountNumber, amount);
+            Account originator = accountService.transferFund(originatingAccountNumber, destinationAccountNumber, amount);
+            String json = new ObjectMapper().writeValueAsString(originator);
 
-            exchange.sendResponseHeaders(200,0);
+            exchange.sendResponseHeaders(200,json.getBytes().length);
+            writeToResponseBody(exchange,json);
         }catch (UnsupportedOperationException e){
             processBadRequest(exchange, e);
         }catch (NoSuchElementException e){
