@@ -15,7 +15,7 @@ public class AccountServiceTest {
     private AccountService accountService;
 
     private AccountDao accountDao;
-    @Rule private ExpectedException expectedException = ExpectedException.none();
+    @Rule public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
