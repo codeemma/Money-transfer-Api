@@ -68,6 +68,36 @@ public class AccountEndpointHandlerTest {
     }
 
     @Test
+    public void handleTransferShouldReturn404WhenOriginatorAccountNotFound() throws Exception{
+        String firstAcc = "zzzzz";
+        String secondAcc = "1889991";
+        BigDecimal amount = BigDecimal.valueOf(4000);
+
+        accountDao.create(secondAcc,"second holder", BigDecimal.valueOf(2000));
+
+        HttpResponse response = transferOverHttp(firstAcc, secondAcc, amount);
+
+        assertThat(response.statusCode(), is(404));
+        assertThat((String) response.body(), containsString("NOT FOUND"));
+
+    }
+
+    @Test
+    public void handleTransferShouldReturn404WhenDestinationAccountNotFound() throws Exception{
+        String firstAcc = "8866668888";
+        String secondAcc = "zzzzz";
+        BigDecimal amount = BigDecimal.valueOf(4000);
+
+        accountDao.create(firstAcc,"first holder", BigDecimal.valueOf(2000));
+
+        HttpResponse response = transferOverHttp(firstAcc, secondAcc, amount);
+
+        assertThat(response.statusCode(), is(404));
+        assertThat((String) response.body(), containsString("NOT FOUND"));
+
+    }
+
+    @Test
     public void handleTransferForMultiThreading() throws Exception{
         String firstAcc = "09812334";
         String secondAcc = "262749910";
