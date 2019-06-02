@@ -7,7 +7,6 @@ public class Account implements Serializable {
 
     private static final long serialVersionUID = 301265L;
 
-    private Long id;
     private String AccountNumber;
     private String accountName;
     private BigDecimal accountBalance;
@@ -19,14 +18,6 @@ public class Account implements Serializable {
         AccountNumber = accountNumber;
         this.accountName = accountName;
         this.accountBalance = accountBalance;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getAccountNumber() {
@@ -56,8 +47,7 @@ public class Account implements Serializable {
     @Override
     public String toString() {
         return "Account{" +
-                "id=" + id +
-                ", AccountNumber='" + AccountNumber + '\'' +
+                "AccountNumber='" + AccountNumber + '\'' +
                 ", accountName='" + accountName + '\'' +
                 ", accountBalance=" + accountBalance +
                 '}';
