@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
 
@@ -30,25 +31,32 @@ public class AccountServiceTest {
         accountDao.create(originatingAccountNumber,"holder 2", BigDecimal.valueOf(5000.00));
         accountDao.create(destinationAccountNumber,"holder 1", BigDecimal.valueOf(1000.00));
 
-        accountService.transferFund(originatingAccountNumber, destinationAccountNumber, BigDecimal.valueOf(2000.00));
+        Account result = accountService.transferFund(originatingAccountNumber, destinationAccountNumber, BigDecimal.valueOf(2000.00));
 
-        Account originator = accountDao.get(originatingAccountNumber);
         Account destination = accountDao.get(destinationAccountNumber);
 
-        assertEquals(3000, originator.getAccountBalance().longValue());
+        assertEquals(3000, result.getAccountBalance().longValue());
         assertEquals(3000, destination.getAccountBalance().longValue());
     }
 
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
     public void transferFundShouldThrowExceptionWhenInsufficientFund() {
-        expectedException.expect(UnsupportedOperationException.class);
-        expectedException.expectMessage((""));
+
         String originatingAccountNumber = "2345";
         String destinationAccountNumber = "23456";
         accountDao.create(originatingAccountNumber,"holder 2", BigDecimal.valueOf(5000.00));
         accountDao.create(destinationAccountNumber,"holder 1", BigDecimal.valueOf(1000.00));
 
+
+        accountService.transferFund(originatingAccountNumber, destinationAccountNumber, BigDecimal.valueOf(5001.00));
+
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void transferFundShouldThrowExceptionAccountNotValid() {
+        String originatingAccountNumber = "zzzzzz";
+        String destinationAccountNumber = "23456";
 
         accountService.transferFund(originatingAccountNumber, destinationAccountNumber, BigDecimal.valueOf(5001.00));
 

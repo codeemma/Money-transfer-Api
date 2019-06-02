@@ -13,7 +13,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public synchronized void transferFund(String originatingAccount, String destinationAccount, BigDecimal amount) {
+    public synchronized Account transferFund(String originatingAccount, String destinationAccount, BigDecimal amount) {
         logger.info(String.format("initiating transfer from %s to %s, amount = %s", originatingAccount,destinationAccount,amount));
         Account originator = getNotNullAccount(originatingAccount);
         Account destination = getNotNullAccount(destinationAccount);
@@ -23,6 +23,8 @@ public class AccountServiceImpl implements AccountService {
         originator.setAccountBalance(originator.getAccountBalance().subtract(amount));
         logger.info(amount +" deducted from account: "+ originator);
         destination.setAccountBalance(destination.getAccountBalance().add(amount));
+
+        return originator;
     }
 
     private Account getNotNullAccount(String accountNumber) {
