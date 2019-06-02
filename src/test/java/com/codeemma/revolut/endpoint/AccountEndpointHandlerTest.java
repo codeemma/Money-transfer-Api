@@ -14,8 +14,7 @@ import java.net.http.HttpResponse;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class AccountEndpointHandlerTest {
@@ -42,6 +41,7 @@ public class AccountEndpointHandlerTest {
         BigDecimal amount = BigDecimal.valueOf(1000);
         accountDao.create(firstAcc,"first holder", BigDecimal.valueOf(2000));
         accountDao.create(secondAcc,"second holder", BigDecimal.valueOf(2000));
+
         HttpResponse response = transferOverHttp(firstAcc, secondAcc, amount);
         Account updatedFirstAcc = accountDao.get(firstAcc);
         Account updatedSecondAcc = accountDao.get(secondAcc);
@@ -49,6 +49,21 @@ public class AccountEndpointHandlerTest {
         assertThat(response.statusCode(), is(200));
         assertThat(updatedFirstAcc.getAccountBalance(),is(BigDecimal.valueOf(1000)));
         assertThat(updatedSecondAcc.getAccountBalance(),is(BigDecimal.valueOf(3000)));
+
+    }
+
+    @Test
+    public void handleTransferWithInsufficientFund() throws Exception{
+        String firstAcc = "1232344";
+        String secondAcc = "765982";
+        BigDecimal amount = BigDecimal.valueOf(4000);
+        accountDao.create(firstAcc,"first holder", BigDecimal.valueOf(2000));
+        accountDao.create(secondAcc,"second holder", BigDecimal.valueOf(2000));
+
+        HttpResponse response = transferOverHttp(firstAcc, secondAcc, amount);
+
+        assertThat(response.statusCode(), is(400));
+        assertThat((String) response.body(), containsString("insufficient"));
 
     }
 

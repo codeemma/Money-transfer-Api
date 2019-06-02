@@ -4,6 +4,7 @@ import com.codeemma.revolut.account.AccountService;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +28,19 @@ public class AccountEndpointHandler {
         BigDecimal amount =  new BigDecimal(queryMap.get("amount"));
 
         logger.info(String.format("transfer from <%s> to <%s>, amount <%s> ",originatingAccountNumber, destinationAccountNumber, amount));
+        try {
+            accountService.transferFund(originatingAccountNumber, destinationAccountNumber, amount);
 
-        accountService.transferFund(originatingAccountNumber, destinationAccountNumber, amount);
+            exchange.sendResponseHeaders(200,0);
+        }catch (Exception e){
+            String responseMessage = e.getClass().getName() + ": " + e.getMessage();
+            exchange.sendResponseHeaders(400, responseMessage.getBytes().length);
+            OutputStream outputStream = exchange.getResponseBody();
+            outputStream.write(responseMessage.getBytes());
+            outputStream.flush();
+        }
 
-        exchange.sendResponseHeaders(200,0);
+
 
         exchange.close();
 
