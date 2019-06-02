@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 public class AccountEndpointHandler {
@@ -32,18 +33,41 @@ public class AccountEndpointHandler {
             accountService.transferFund(originatingAccountNumber, destinationAccountNumber, amount);
 
             exchange.sendResponseHeaders(200,0);
+        }catch (UnsupportedOperationException e){
+            processBadRequest(exchange, e);
+        }catch (NoSuchElementException e){
+            processNotFound(exchange, e);
         }catch (Exception e){
-            String responseMessage = e.getClass().getName() + ": " + e.getMessage();
-            exchange.sendResponseHeaders(400, responseMessage.getBytes().length);
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(responseMessage.getBytes());
-            outputStream.flush();
+            processInternalServerError(exchange, e);
         }
-
-
 
         exchange.close();
 
+    }
+
+    private void processInternalServerError(HttpExchange exchange, Exception e) throws IOException {
+        String responseMessage = e.getClass().getName() + ": " + e.getMessage();
+        exchange.sendResponseHeaders(500, responseMessage.getBytes().length);
+        writeToResponseBody(exchange, responseMessage);
+        return;
+    }
+
+    private void processNotFound(HttpExchange exchange, NoSuchElementException e) throws IOException {
+        String responseMessage = e.getClass().getName() + ": " + e.getMessage();
+        exchange.sendResponseHeaders(404, responseMessage.getBytes().length);
+        writeToResponseBody(exchange, responseMessage);
+    }
+
+    private void processBadRequest(HttpExchange exchange, Exception e) throws IOException {
+        String responseMessage = e.getClass().getName() + ": " + e.getMessage();
+        exchange.sendResponseHeaders(400, responseMessage.getBytes().length);
+        writeToResponseBody(exchange, responseMessage);
+    }
+
+    private void writeToResponseBody(HttpExchange exchange, String responseMessage) throws IOException {
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(responseMessage.getBytes());
+        outputStream.flush();
     }
 
     private Map<String, String> getQueryMap(HttpExchange exchange) {

@@ -28,7 +28,7 @@ public class MainApp {
         createContext(server);
         server.setExecutor(Executors.newCachedThreadPool()); // set executor for multithreading
         server.start();
-        System.out.println("Server started on port "+serverPort);
+        System.out.println("Server started on port " + serverPort);
     }
 
     private static void createContext(HttpServer server) {
