@@ -25,18 +25,25 @@ public class AccountEndpointHandler {
     //URI - transfer?from={origin}&to={destination}&amount={amount}
     public void handleTransfer(HttpExchange exchange) throws IOException {
         //support only POST method
-        if(!exchange.getRequestMethod().equalsIgnoreCase("POST")){
+        if(exchange.getRequestMethod().equalsIgnoreCase("POST")){
+            Map<String, String> queryMap = getQueryMap(exchange);
+
+            String originatingAccountNumber = queryMap.get("from");
+            String destinationAccountNumber = queryMap.get("to");
+            BigDecimal amount =  new BigDecimal(queryMap.getOrDefault("amount","0"));
+
+            processTransferFundRequest(exchange, originatingAccountNumber, destinationAccountNumber, amount);
+
+            exchange.close();
+
+        }else {
             processMethodNotSupported(exchange);
             exchange.close();
-            return;
         }
 
-        Map<String, String> queryMap = getQueryMap(exchange);
+    }
 
-        String originatingAccountNumber = queryMap.get("from");
-        String destinationAccountNumber = queryMap.get("to");
-        BigDecimal amount =  new BigDecimal(queryMap.getOrDefault("amount","0"));
-
+    private void processTransferFundRequest(HttpExchange exchange, String originatingAccountNumber, String destinationAccountNumber, BigDecimal amount) throws IOException {
         logger.info(String.format("transfer from <%s> to <%s>, amount <%s> ",originatingAccountNumber, destinationAccountNumber, amount));
         try {
             Account originator = accountService.transferFund(originatingAccountNumber, destinationAccountNumber, amount);
@@ -51,9 +58,6 @@ public class AccountEndpointHandler {
         }catch (Exception e){
             processInternalServerError(exchange, e);
         }
-
-        exchange.close();
-
     }
 
     private void processMethodNotSupported(HttpExchange exchange) throws IOException {

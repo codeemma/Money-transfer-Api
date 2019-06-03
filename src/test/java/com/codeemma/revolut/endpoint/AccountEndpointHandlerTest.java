@@ -153,7 +153,23 @@ public class AccountEndpointHandlerTest {
     }
 
 
+    @Test
+    public void handleGetAccount() throws Exception{
+        String accountNumber = "544279910";
 
+        accountDao.create(accountNumber,"test holder", BigDecimal.valueOf(2000));
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:" + randomPort + "/api/account/" + accountNumber))
+                .build();
+        HttpResponse response  = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode(), is(200));
+        assertThat((String) response.body(), containsString("NOT FOUND"));
+
+    }
 
     private HttpResponse transferOverHttp(String firstAcc, String secondAcc, BigDecimal amount) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
