@@ -55,6 +55,25 @@ public class AccountEndpointHandlerTest {
     }
 
     @Test
+    public void handleTransferMethodNotSupportedShouldReturn415() throws Exception{
+        String firstAcc = "123";
+        String secondAcc = "765";
+        BigDecimal amount = new BigDecimal(100);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:" + randomPort + "/api/transfer?from=" + firstAcc + "&to=" + secondAcc + "&amount=" + amount))
+                .build();
+        HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode(), is(415));
+        System.out.println("body ---" +response.body());
+        assertThat((String) response.body(),containsString("method not supported"));
+
+    }
+
+    @Test
     public void handleTransferWithInsufficientFund() throws Exception{
         String firstAcc = "1232344";
         String secondAcc = "765982";
@@ -135,9 +154,11 @@ public class AccountEndpointHandlerTest {
 
 
 
+
     private HttpResponse transferOverHttp(String firstAcc, String secondAcc, BigDecimal amount) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.noBody())
                 .uri(URI.create("http://localhost:" + randomPort + "/api/transfer?from=" + firstAcc + "&to=" + secondAcc + "&amount=" + amount))
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());

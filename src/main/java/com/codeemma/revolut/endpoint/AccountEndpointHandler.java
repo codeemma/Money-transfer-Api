@@ -24,11 +24,18 @@ public class AccountEndpointHandler {
 
     //URI - transfer?from={origin}&to={destination}&amount={amount}
     public void handleTransfer(HttpExchange exchange) throws IOException {
+        //support only POST method
+        if(!exchange.getRequestMethod().equalsIgnoreCase("POST")){
+            processMethodNotSupported(exchange);
+            exchange.close();
+            return;
+        }
+
         Map<String, String> queryMap = getQueryMap(exchange);
 
         String originatingAccountNumber = queryMap.get("from");
         String destinationAccountNumber = queryMap.get("to");
-        BigDecimal amount =  new BigDecimal(queryMap.get("amount"));
+        BigDecimal amount =  new BigDecimal(queryMap.getOrDefault("amount","0"));
 
         logger.info(String.format("transfer from <%s> to <%s>, amount <%s> ",originatingAccountNumber, destinationAccountNumber, amount));
         try {
@@ -49,11 +56,16 @@ public class AccountEndpointHandler {
 
     }
 
+    private void processMethodNotSupported(HttpExchange exchange) throws IOException {
+        String message = "Htttp method not supported";
+        exchange.sendResponseHeaders(415, message.getBytes().length);
+        writeToResponseBody(exchange, message);
+    }
+
     private void processInternalServerError(HttpExchange exchange, Exception e) throws IOException {
         String responseMessage = e.getClass().getName() + ": " + e.getMessage();
         exchange.sendResponseHeaders(500, responseMessage.getBytes().length);
         writeToResponseBody(exchange, responseMessage);
-        return;
     }
 
     private void processNotFound(HttpExchange exchange, NoSuchElementException e) throws IOException {
