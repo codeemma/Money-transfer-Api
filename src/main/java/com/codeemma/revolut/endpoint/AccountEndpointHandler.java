@@ -22,7 +22,7 @@ public class AccountEndpointHandler {
         this.accountService = accountService;
     }
 
-    //URI - transfer?from={origin}&to={destination}&amount={amount}
+    //URI POST - transfer?from={origin}&to={destination}&amount={amount}
     public void handleTransfer(HttpExchange exchange) throws IOException {
         //support only POST method
         if(exchange.getRequestMethod().equalsIgnoreCase("POST")){
@@ -41,6 +41,37 @@ public class AccountEndpointHandler {
             exchange.close();
         }
 
+    }
+
+    //URI GET - account?accountNumber={accountNumber}
+    public void handleGetAccount(HttpExchange exchange) throws IOException {
+        if(exchange.getRequestMethod().equalsIgnoreCase("GET")){
+            Map<String, String> queryMap = getQueryMap(exchange);
+
+            String accountNumber = queryMap.get("accountNumber");
+
+            processGetAccountRequest(exchange, accountNumber);
+
+            exchange.close();
+
+        }else {
+            processMethodNotSupported(exchange);
+            exchange.close();
+        }
+
+    }
+
+    private void processGetAccountRequest(HttpExchange exchange, String accountNumber) throws IOException {
+        try {
+            Account account = accountService.getAccount(accountNumber);
+            String json = new ObjectMapper().writeValueAsString(account);
+
+            exchange.sendResponseHeaders(200,json.getBytes().length);
+            writeToResponseBody(exchange,json);
+
+        }catch (NoSuchElementException e){
+            processNotFound(exchange, e);
+        }
     }
 
     private void processTransferFundRequest(HttpExchange exchange, String originatingAccountNumber, String destinationAccountNumber, BigDecimal amount) throws IOException {

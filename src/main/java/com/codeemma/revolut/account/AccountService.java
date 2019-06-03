@@ -5,4 +5,6 @@ import java.math.BigDecimal;
 public interface AccountService {
     Account transferFund(String originatingAccount, String destinationAccount, BigDecimal amount);
 
+    Account getAccount(String accountNumber);
+
 }

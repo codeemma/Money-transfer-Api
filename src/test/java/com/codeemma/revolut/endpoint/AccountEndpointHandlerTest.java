@@ -156,17 +156,38 @@ public class AccountEndpointHandlerTest {
     @Test
     public void handleGetAccount() throws Exception{
         String accountNumber = "544279910";
+        String accountName = "Test Name";
+        BigDecimal amount =  BigDecimal.valueOf(2000);
 
-        accountDao.create(accountNumber,"test holder", BigDecimal.valueOf(2000));
+        accountDao.create(accountNumber, accountName, amount);
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("http://localhost:" + randomPort + "/api/account/" + accountNumber))
+                .uri(URI.create("http://localhost:" + randomPort + "/api/account?accountNumber="+accountNumber))
+                .build();
+        HttpResponse response  = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Account responseBody = new ObjectMapper().readValue((String) response.body(), Account.class);
+
+        assertThat(response.statusCode(), is(200));
+        assertThat(responseBody.getAccountNumber(), is(accountNumber));
+        assertThat(responseBody.getAccountNumber(), is(accountNumber));
+        assertThat(responseBody.getAccountBalance(), is(amount));
+
+    }
+
+    @Test
+    public void handleGetAccountShouldReturn404WhenAccountNotInStore() throws Exception{
+        String accountNumber = "zzzzzzzz";
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:" + randomPort + "/api/account?accountNumber="+accountNumber))
                 .build();
         HttpResponse response  = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertThat(response.statusCode(), is(200));
+        assertThat(response.statusCode(), is(404));
         assertThat((String) response.body(), containsString("NOT FOUND"));
 
     }

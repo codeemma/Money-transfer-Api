@@ -27,6 +27,11 @@ public class AccountServiceImpl implements AccountService {
         return originator;
     }
 
+    @Override
+    public Account getAccount(String accountNumber) {
+        return getNotNullAccount(accountNumber);
+    }
+
     private Account getNotNullAccount(String accountNumber) {
         Account account = accountDao.get(accountNumber);
         if (account == null){

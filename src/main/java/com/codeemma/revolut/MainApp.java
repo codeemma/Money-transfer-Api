@@ -38,6 +38,9 @@ public class MainApp {
         server.createContext("/api/transfer", accountEndpointHandler::handleTransfer);
         System.out.println("context created"+"/api/transfer");
 
+        server.createContext("/api/account", accountEndpointHandler::handleGetAccount);
+        System.out.println("context created"+"/api/account");
+
     }
 
     public void stopServer(){
