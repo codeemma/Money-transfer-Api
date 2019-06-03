@@ -2,6 +2,7 @@ package com.codeemma.revolut;
 
 import com.codeemma.revolut.account.AccountServiceImpl;
 import com.codeemma.revolut.endpoint.AccountEndpointHandler;
+import com.codeemma.revolut.seeder.AccountSeeder;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ public class MainApp {
     HttpServer server;
 
     public static void main(String[] args) throws IOException {
+        AccountSeeder.seedData();
         MainApp mainApp = new MainApp();
         mainApp.startServer();
 
